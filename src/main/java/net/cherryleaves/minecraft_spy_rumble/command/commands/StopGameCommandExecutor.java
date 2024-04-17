@@ -8,8 +8,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 public class StopGameCommandExecutor implements CommandExecutor {
     @Override
@@ -23,8 +24,9 @@ public class StopGameCommandExecutor implements CommandExecutor {
         player.sendMessage("ゲームを強制中断させました");
         player.playSound(player.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1, 1);
 
-        Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("wolf")).unregister();
-        Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villager")).unregister();
+        // wolfとvillagerのチームを削除
+        unregisterTeam("wolf");
+        unregisterTeam("villager");
 
         Bukkit.getServer().getWorlds().forEach(world -> {
             world.getEntities().forEach(entity -> {
@@ -40,5 +42,18 @@ public class StopGameCommandExecutor implements CommandExecutor {
             });
         });
         return true;
+    }
+
+    private void unregisterTeam(String teamName) {
+        // ScoreboardManagerを取得&null回避
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        if (manager == null) return;
+        // Scoreboardを取得
+        Scoreboard scoreboard = manager.getMainScoreboard();
+        // teamNameからTeamを取得&null回避
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) return;
+        // チームを削除
+        team.unregister();
     }
 }
