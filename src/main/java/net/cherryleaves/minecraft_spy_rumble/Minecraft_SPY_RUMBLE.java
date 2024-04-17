@@ -1,9 +1,8 @@
 package net.cherryleaves.minecraft_spy_rumble;
 
+import net.cherryleaves.minecraft_spy_rumble.command.CommandManager;
 import net.cherryleaves.minecraft_spy_rumble.tools.Util;
 import org.bukkit.*;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -43,64 +42,14 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
         getServer().getPluginManager().registerEvents(new Player_Task(), this);
+
+        new CommandManager(this);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         super.onDisable();
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("task-spawn")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-                return true;
-            }
-            Player admin = ((Player) sender).getPlayer();
-            // GUiを開く
-            assert admin != null;
-            admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
-            new ItemSpawnStand().getItem(admin);
-        }
-        if (command.getName().equalsIgnoreCase("start")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-                return true;
-            }
-            Player admin = ((Player) sender).getPlayer();
-            // GUiを開く
-            assert admin != null;
-            admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
-            // 設定本を付与
-            ItemStack operateBook = Util.getOperateBook();
-            admin.getInventory().addItem(operateBook);
-        }
-        if (command.getName().equalsIgnoreCase("stop-game")) {
-            if (!(sender instanceof Player) || !sender.isOp()) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-                return true;
-            }
-            Objects.requireNonNull(((Player) sender).getPlayer()).sendMessage("ゲームを強制中断させました");
-            ((Player) sender).getPlayer().playSound(((Player) sender).getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1, 1);
-            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("wolf")).unregister();
-            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villager")).unregister();
-            Bukkit.getServer().getWorlds().forEach(world -> {
-                world.getEntities().forEach(entity -> {
-                    if (entity instanceof ArmorStand) {
-                        ArmorStand armorStand = (ArmorStand) entity;
-                        if (armorStand.getScoreboardTags().contains("TaskPoint")) {
-                            armorStand.setGlowing(true);
-                            if (armorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
-                                armorStand.removeScoreboardTag("SelectedTaskPoint");
-                            }
-                        }
-                    }
-                });
-            });
-        }
-        return false;
     }
 
     @EventHandler
@@ -114,11 +63,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             ItemStack operateBook = Util.getOperateBook();
             player.getInventory().addItem(operateBook);
         }
-    }
-
-    // 設定本を取得するメソッド
-    public ItemStack getOperateBook() {
-        return Util.createItemWithDisplayName(Material.BOOK, ChatColor.BOLD + "設定本");
     }
 
     // BeforeWolfPlayerCountの略
