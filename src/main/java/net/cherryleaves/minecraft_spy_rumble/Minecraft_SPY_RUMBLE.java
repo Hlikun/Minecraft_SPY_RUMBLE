@@ -1,6 +1,7 @@
 package net.cherryleaves.minecraft_spy_rumble;
 
 import net.cherryleaves.minecraft_spy_rumble.command.CommandManager;
+import net.cherryleaves.minecraft_spy_rumble.event.EventManager;
 import net.cherryleaves.minecraft_spy_rumble.tools.Util;
 import org.bukkit.*;
 import org.bukkit.command.ConsoleCommandSender;
@@ -34,7 +35,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage(ChatColor.GREEN + "修正等ありましたら是非Githubにプルリク投げて下さい");
         console.sendMessage("");
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
-        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new EventManager(), this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
         getServer().getPluginManager().registerEvents(new Player_Task(), this);
 
@@ -47,19 +48,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        // 参加時にアイテムを削除
-        player.getInventory().clear();
-
-        // op所持者に設定本を付与
-        if (player.isOp()) {
-            ItemStack operateBook = Util.getOperateBook();
-            player.getInventory().addItem(operateBook);
-        }
-    }
-
     // BeforeWolfPlayerCountの略
     public static int BWPCount = 1;
     // BeforeVillagerPlayerCountの略
@@ -68,22 +56,10 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public static int PlayerCount;
     // 同時に出現するタスクの数
     public static int ParallelTaskCount = 3;
-    Inventory SettingGUI = Bukkit.createInventory(null, 9, ChatColor.BOLD + "設定");
-    int armorStandCount = 0;
+    public static Inventory SettingGUI = Bukkit.createInventory(null, 9, ChatColor.BOLD + "設定");
+    public static int armorStandCount = 0;
 
-
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Action a = event.getAction();
-        Player p = event.getPlayer();
-        if (((a == Action.RIGHT_CLICK_AIR) || (a == Action.RIGHT_CLICK_BLOCK)) && (event.getItem() != null) && (event.getItem().getType() == Material.BOOK)) {
-            p.playSound(event.getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
-            SettingGUICreate();
-            p.openInventory(SettingGUI);
-        }
-    }
-
-    public void SettingGUICreate() {
+    public static void SettingGUICreate() {
         // 人狼の数減らし
         ItemStack wolfCountDownItem = Util.createItemWithDisplayName(Material.BLUE_CANDLE, ChatColor.BLUE + "人狼の数を減らす");
         SettingGUI.setItem(0, wolfCountDownItem);
@@ -109,71 +85,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         SettingGUI.setItem(8, gameStartItem);
     }
 
-    @EventHandler
-    public void onPlayerInventoryClickEvent(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player) {
-            Player player = (Player) event.getWhoClicked();
-            // クリックされたGUIを取得する
-            Inventory clickedInventory = event.getClickedInventory();
-            if (clickedInventory == SettingGUI) {
-                ItemStack clickedItem = event.getCurrentItem();
-                if (clickedItem != null && clickedItem.getType().equals(Material.RED_CANDLE)) {
-                    BWPCount += 1;
-                    player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
-                    SettingGUICreate();
-                    player.openInventory(SettingGUI);
-                }
-                if (clickedItem != null && clickedItem.getType().equals(Material.BLUE_CANDLE)) {
-                    if (BWPCount > 1) {
-                        BWPCount -= 1;
-                        player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
-                        SettingGUICreate();
-                        player.openInventory(SettingGUI);
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + "人狼の数を1未満にすることはできません");
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f, 0.01f);
-                        event.setCancelled(true);
-                    }
-                }
-                if (clickedItem != null && clickedItem.getType().equals(Material.MAGENTA_CANDLE)) {
-                    ParallelTaskCount += 1;
-                    player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
-                    SettingGUICreate();
-                    player.openInventory(SettingGUI);
-                }
-                if (clickedItem != null && clickedItem.getType().equals(Material.LIGHT_BLUE_CANDLE)) {
-                    if (ParallelTaskCount > 0) {
-                        ParallelTaskCount -= 1;
-                        player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
-                        SettingGUICreate();
-                        player.openInventory(SettingGUI);
-                    }
-                    else {
-                        player.sendMessage(ChatColor.RED + "同時に出現するタスクの数を0未満にすることはできません");
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f, 0.01f);
-                    }
-                }
-                if (clickedItem != null && clickedItem.getType().equals(Material.TOTEM_OF_UNDYING)) {
-                    armorStandCount = 0;
-                    for (ArmorStand armorStand : Bukkit.getWorlds().get(0).getEntitiesByClass(ArmorStand.class)) {
-                        if (armorStand.getScoreboardTags().contains("TaskPoint")) {
-                            armorStandCount++;
-                        }
-                    }
-                    if(armorStandCount >= ParallelTaskCount) {
-                        player.closeInventory();
-                        new Game().Start();
-                    }
-                    else{
-                        player.sendMessage(ChatColor.RED + "設置してあるアーマースタンドの数を超えて設定することはできません。");
-                        player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
-                    }
-                }
-                event.setCancelled(true);
-            }
-        }
-    }
+
     public void PlayerSneak() {
         task = new BukkitRunnable() {
             @Override
@@ -184,6 +96,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                     }
                 }
             }
-        };task.runTaskTimer(this, 0L, 1L);
+        };
+        task.runTaskTimer(this, 0L, 1L);
     }
 }
