@@ -25,6 +25,13 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         // Plugin startup logic
         super.onEnable();
         ConsoleCommandSender console = getServer().getConsoleSender();
+        getServer().getPluginManager().registerEvents(new EventManager(), this);
+        getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
+        getServer().getPluginManager().registerEvents(new Player_Task(), this);
+
+        new CommandManager(this);
+
+
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
         console.sendMessage(ChatColor.AQUA + "Minecraft Spy Rumble plugin activated!!!!!!!!!!!");
         console.sendMessage("");
@@ -35,11 +42,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage(ChatColor.GREEN + "修正等ありましたら是非Githubにプルリク投げて下さい");
         console.sendMessage("");
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
-        getServer().getPluginManager().registerEvents(new EventManager(), this);
-        getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
-        getServer().getPluginManager().registerEvents(new Player_Task(), this);
-
-        new CommandManager(this);
     }
 
     @Override
