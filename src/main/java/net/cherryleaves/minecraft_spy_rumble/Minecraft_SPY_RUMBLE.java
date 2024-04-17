@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
@@ -143,47 +143,38 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
 
     public void SettingGUICreate() {
         // 人狼の数減らし
-        ItemStack WolfCountDownItem = new ItemStack(Material.BLUE_CANDLE);
-        ItemMeta WolfCountDownItemMeta = WolfCountDownItem.getItemMeta();
-        Objects.requireNonNull(WolfCountDownItemMeta).setDisplayName(ChatColor.BLUE + "人狼の数を減らす");
-        WolfCountDownItem.setItemMeta(WolfCountDownItemMeta);
-        SettingGUI.setItem(0, WolfCountDownItem);
+        ItemStack wolfCountDownItem = setMenuItemMeta(Material.BLUE_CANDLE, ChatColor.BLUE + "人狼の数を減らす");
+        SettingGUI.setItem(0, wolfCountDownItem);
         // 人狼の数表示
-        ItemStack WolfPlayerCountItem = new ItemStack(Material.WITHER_SKELETON_SKULL);
-        ItemMeta WolfPlayerCountItemMeta = WolfPlayerCountItem.getItemMeta();
-        Objects.requireNonNull(WolfPlayerCountItemMeta).setDisplayName(ChatColor.DARK_AQUA + "人狼の数は" + ChatColor.GOLD + BWPCount + ChatColor.DARK_AQUA + "人です");
-        WolfPlayerCountItem.setItemMeta(WolfPlayerCountItemMeta);
-        SettingGUI.setItem(1, WolfPlayerCountItem);
+        ItemStack wolfPlayerCountItem = setMenuItemMeta(Material.WITHER_SKELETON_SKULL,
+                ChatColor.DARK_AQUA + "人狼の数は" + ChatColor.GOLD + BWPCount + ChatColor.DARK_AQUA + "人です");
+        SettingGUI.setItem(1, wolfPlayerCountItem);
         // 人狼の数増やし
-        ItemStack WolfCountUpItem = new ItemStack(Material.RED_CANDLE);
-        ItemMeta WolfCountUpItemMeta = WolfCountUpItem.getItemMeta();
-        Objects.requireNonNull(WolfCountUpItemMeta).setDisplayName(ChatColor.RED + "人狼の数を増やす");
-        WolfCountUpItem.setItemMeta(WolfCountUpItemMeta);
-        SettingGUI.setItem(2, WolfCountUpItem);
+        ItemStack wolfCountUpItem = setMenuItemMeta(Material.RED_CANDLE, ChatColor.RED + "人狼の数を増やす");
+        SettingGUI.setItem(2, wolfCountUpItem);
         // タスクの数減らし
-        ItemStack TaskCountDownItem = new ItemStack(Material.LIGHT_BLUE_CANDLE);
-        ItemMeta TaskCountDownItemMeta = TaskCountDownItem.getItemMeta();
-        Objects.requireNonNull(TaskCountDownItemMeta).setDisplayName(ChatColor.RED + "同時に出現するタスクの数を減らす");
-        TaskCountDownItem.setItemMeta(TaskCountDownItemMeta);
-        SettingGUI.setItem(4, TaskCountDownItem);
+        ItemStack taskCountDownItem = setMenuItemMeta(Material.LIGHT_BLUE_CANDLE, ChatColor.RED + "同時に出現するタスクの数を減らす");
+        SettingGUI.setItem(4, taskCountDownItem);
         // タスクの数表示
-        ItemStack TaskCountItem = new ItemStack(Material.IRON_PICKAXE);
-        ItemMeta TaskCountItemMeta = TaskCountItem.getItemMeta();
-        Objects.requireNonNull(TaskCountItemMeta).setDisplayName(ChatColor.DARK_AQUA + "同時に出現するタスクの数は" + ChatColor.GOLD + ParallelTaskCount + ChatColor.DARK_AQUA + "個です");
-        TaskCountItem.setItemMeta(TaskCountItemMeta);
-        SettingGUI.setItem(5, TaskCountItem);
+        ItemStack taskCountItem = setMenuItemMeta(Material.IRON_PICKAXE,
+                ChatColor.DARK_AQUA + "同時に出現するタスクの数は" + ChatColor.GOLD + ParallelTaskCount + ChatColor.DARK_AQUA + "個です");
+        SettingGUI.setItem(5, taskCountItem);
         // タスクの数増やし
-        ItemStack TaskCountUpItem = new ItemStack(Material.MAGENTA_CANDLE);
-        ItemMeta TaskCountUpItemMeta = TaskCountUpItem.getItemMeta();
-        Objects.requireNonNull(TaskCountUpItemMeta).setDisplayName(ChatColor.RED + "同時に出現するタスクの数を増やす");
-        TaskCountUpItem.setItemMeta(TaskCountUpItemMeta);
-        SettingGUI.setItem(6, TaskCountUpItem);
+        ItemStack taskCountUpItem = setMenuItemMeta(Material.MAGENTA_CANDLE, ChatColor.RED + "同時に出現するタスクの数を増やす");
+        SettingGUI.setItem(6, taskCountUpItem);
         // ゲームスタートボタン
-        ItemStack GameStartItem = new ItemStack(Material.TOTEM_OF_UNDYING);
-        ItemMeta GameStartItemMeta = GameStartItem.getItemMeta();
-        Objects.requireNonNull(GameStartItemMeta).setDisplayName(ChatColor.BLUE + "ゲームスタート！");
-        GameStartItem.setItemMeta(GameStartItemMeta);
-        SettingGUI.setItem(8, GameStartItem);
+        ItemStack gameStartItem = setMenuItemMeta(Material.TOTEM_OF_UNDYING, ChatColor.BLUE + "ゲームスタート！");
+        SettingGUI.setItem(8, gameStartItem);
+    }
+
+    @Nullable
+    private ItemStack setMenuItemMeta(Material material, String displayName) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return null;
+        meta.setDisplayName(displayName);
+        item.setItemMeta(meta);
+        return item;
     }
 
     @EventHandler
