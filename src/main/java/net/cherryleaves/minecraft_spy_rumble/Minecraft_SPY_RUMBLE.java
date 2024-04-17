@@ -74,7 +74,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             assert admin != null;
             admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
             // 設定本を付与
-            ItemStack operateBook = getOperateBook();
+            ItemStack operateBook = Util.getOperateBook();
             admin.getInventory().addItem(operateBook);
         }
         if (command.getName().equalsIgnoreCase("stop-game")) {
@@ -111,7 +111,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
 
         // op所持者に設定本を付与
         if (player.isOp()) {
-            ItemStack operateBook = getOperateBook();
+            ItemStack operateBook = Util.getOperateBook();
             player.getInventory().addItem(operateBook);
         }
     }
