@@ -74,7 +74,9 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             // GUiを開く
             assert admin != null;
             admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
-            GiveBook(admin);
+            // 設定本を付与
+            ItemStack operateBook = getOperateBook();
+            admin.getInventory().addItem(operateBook);
         }
         if (command.getName().equalsIgnoreCase("stop-game")) {
             if (!(sender instanceof Player) || !sender.isOp()) {
@@ -103,19 +105,21 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent Player) {
-        Player.getPlayer().getInventory().clear();
-        if (Player.getPlayer().isOp()) {
-            GiveBook(Player.getPlayer());
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        // 参加時にアイテムを削除
+        player.getInventory().clear();
+
+        // op所持者に設定本を付与
+        if (player.isOp()) {
+            ItemStack operateBook = getOperateBook();
+            player.getInventory().addItem(operateBook);
         }
     }
 
-    public void GiveBook(Player p){
-        ItemStack OperateBook = new ItemStack(Material.BOOK);
-        ItemMeta OperateBookMeta = OperateBook.getItemMeta(); // metaを登録
-        Objects.requireNonNull(OperateBookMeta).setDisplayName(ChatColor.BOLD + "設定本");
-        OperateBook.setItemMeta(OperateBookMeta);
-        Objects.requireNonNull(p.getPlayer()).getInventory().addItem(OperateBook);
+    // 設定本を取得するメソッド
+    public ItemStack getOperateBook() {
+        return Util.setMenuItemMeta(Material.BOOK, ChatColor.BOLD + "設定本");
     }
 
     // BeforeWolfPlayerCountの略
