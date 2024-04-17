@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 public class Util {
     @Nullable
-    public static ItemStack setMenuItemMeta(Material material, String displayName) {
+    public static ItemStack createItemWithDisplayName(Material material, String displayName) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return null;

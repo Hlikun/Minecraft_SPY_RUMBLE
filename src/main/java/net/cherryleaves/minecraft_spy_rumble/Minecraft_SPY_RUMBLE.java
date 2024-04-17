@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -119,7 +118,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
 
     // 設定本を取得するメソッド
     public ItemStack getOperateBook() {
-        return Util.setMenuItemMeta(Material.BOOK, ChatColor.BOLD + "設定本");
+        return Util.createItemWithDisplayName(Material.BOOK, ChatColor.BOLD + "設定本");
     }
 
     // BeforeWolfPlayerCountの略
@@ -147,27 +146,27 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
 
     public void SettingGUICreate() {
         // 人狼の数減らし
-        ItemStack wolfCountDownItem = Util.setMenuItemMeta(Material.BLUE_CANDLE, ChatColor.BLUE + "人狼の数を減らす");
+        ItemStack wolfCountDownItem = Util.createItemWithDisplayName(Material.BLUE_CANDLE, ChatColor.BLUE + "人狼の数を減らす");
         SettingGUI.setItem(0, wolfCountDownItem);
         // 人狼の数表示
-        ItemStack wolfPlayerCountItem = Util.setMenuItemMeta(Material.WITHER_SKELETON_SKULL,
+        ItemStack wolfPlayerCountItem = Util.createItemWithDisplayName(Material.WITHER_SKELETON_SKULL,
                 ChatColor.DARK_AQUA + "人狼の数は" + ChatColor.GOLD + BWPCount + ChatColor.DARK_AQUA + "人です");
         SettingGUI.setItem(1, wolfPlayerCountItem);
         // 人狼の数増やし
-        ItemStack wolfCountUpItem = Util.setMenuItemMeta(Material.RED_CANDLE, ChatColor.RED + "人狼の数を増やす");
+        ItemStack wolfCountUpItem = Util.createItemWithDisplayName(Material.RED_CANDLE, ChatColor.RED + "人狼の数を増やす");
         SettingGUI.setItem(2, wolfCountUpItem);
         // タスクの数減らし
-        ItemStack taskCountDownItem = Util.setMenuItemMeta(Material.LIGHT_BLUE_CANDLE, ChatColor.RED + "同時に出現するタスクの数を減らす");
+        ItemStack taskCountDownItem = Util.createItemWithDisplayName(Material.LIGHT_BLUE_CANDLE, ChatColor.RED + "同時に出現するタスクの数を減らす");
         SettingGUI.setItem(4, taskCountDownItem);
         // タスクの数表示
-        ItemStack taskCountItem = Util.setMenuItemMeta(Material.IRON_PICKAXE,
+        ItemStack taskCountItem = Util.createItemWithDisplayName(Material.IRON_PICKAXE,
                 ChatColor.DARK_AQUA + "同時に出現するタスクの数は" + ChatColor.GOLD + ParallelTaskCount + ChatColor.DARK_AQUA + "個です");
         SettingGUI.setItem(5, taskCountItem);
         // タスクの数増やし
-        ItemStack taskCountUpItem = Util.setMenuItemMeta(Material.MAGENTA_CANDLE, ChatColor.RED + "同時に出現するタスクの数を増やす");
+        ItemStack taskCountUpItem = Util.createItemWithDisplayName(Material.MAGENTA_CANDLE, ChatColor.RED + "同時に出現するタスクの数を増やす");
         SettingGUI.setItem(6, taskCountUpItem);
         // ゲームスタートボタン
-        ItemStack gameStartItem = Util.setMenuItemMeta(Material.TOTEM_OF_UNDYING, ChatColor.BLUE + "ゲームスタート！");
+        ItemStack gameStartItem = Util.createItemWithDisplayName(Material.TOTEM_OF_UNDYING, ChatColor.BLUE + "ゲームスタート！");
         SettingGUI.setItem(8, gameStartItem);
     }
 
