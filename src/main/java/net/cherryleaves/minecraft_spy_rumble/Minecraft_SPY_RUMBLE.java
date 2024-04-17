@@ -17,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Objects;
-
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public BukkitRunnable task;
     @Override
@@ -36,9 +34,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage(ChatColor.GREEN + "修正等ありましたら是非Githubにプルリク投げて下さい");
         console.sendMessage("");
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
-        Objects.requireNonNull(getCommand("task-spawn")).setExecutor(this);
-        Objects.requireNonNull(getCommand("start")).setExecutor(this);
-        Objects.requireNonNull(getCommand("stop-game")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
         getServer().getPluginManager().registerEvents(new Player_Task(), this);
